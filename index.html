@@ -32,8 +32,9 @@
 
   /* HERO */
   .hero{padding:100px 0 60px; text-align:center;}
-  .avatar-ring{width:96px; height:96px; margin:0 auto 28px; border-radius:50%; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; background:var(--panel); font-family:var(--mono); font-size:12px; color:var(--cyan); position:relative;}
-  .avatar-ring::before{content:''; position:absolute; inset:-6px; border-radius:50%; border:1px dashed var(--border);}
+  .avatar-ring{width:96px; height:96px; margin:0 auto 28px; border-radius:50%; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; background:var(--panel); font-family:var(--mono); font-size:12px; color:var(--cyan); position:relative; overflow:hidden;}
+  .avatar-ring::before{content:''; position:absolute; inset:-6px; border-radius:50%; border:1px dashed var(--border); pointer-events:none;}
+  .avatar-ring img{width:100%; height:100%; object-fit:cover; border-radius:50%;}
   .eyebrow{font-family:var(--mono); font-size:12.5px; color:var(--cyan); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:16px; display:flex; align-items:center; gap:10px; justify-content:center;}
   .eyebrow::before{content:'▹'; color:var(--amber);}
   h1{font-family:var(--serif); font-weight:600; font-size:clamp(38px,6vw,64px); line-height:1.06; letter-spacing:-0.01em;}
@@ -93,7 +94,8 @@
 
   /* PROJECTS */
   .filter-row{display:flex; justify-content:center; gap:8px; margin-bottom:36px; flex-wrap:wrap;}
-  .project-grid{display:grid; gap:22px;}
+  .project-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:22px;}
+  @media (max-width:760px){.project-grid{grid-template-columns:1fr;}}
   .project{border:1px solid var(--border); border-radius:12px; background:var(--panel); padding:28px; transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease; display:block; text-decoration:none;}
   .project:hover{border-color:var(--cyan); transform:translateY(-3px); box-shadow:0 14px 30px -18px rgba(79,216,196,0.35);}
   .proj-top{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap;}
@@ -167,7 +169,7 @@
 <main>
   <!-- HERO -->
   <section class="hero wrap">
-    <div class="avatar-ring">Duy</div>
+    <div class="avatar-ring"><img src="avatar.jpg" alt="Duy"></div>
     <div class="eyebrow">Data Engineering Student · HCMUTE</div>
     <h1>Hi, I'm <span class="accent">Duy</span></h1>
     <p class="role-tag">Data Engineer & Aspiring Data Analyst</p>
@@ -285,16 +287,12 @@
         </div>
         <h3 class="proj-title">F&amp;B Business Intelligence Platform</h3>
         <p class="proj-desc">
-          End-to-end ELT pipeline on a Modern Data Stack, processing 270K+ sales transactions for a simulated
-          20-store F&amp;B chain — from raw ingestion to Star Schema warehouse to decision-ready data marts.
+          ELT pipeline on a Modern Data Stack processing 270K+ sales transactions for a simulated 20-store F&amp;B chain.
         </p>
         <ul class="proj-bullets">
-          <li>Built an end-to-end ELT pipeline ingesting data from a REST API (JSON), CSVs, and Google Sheets via n8n/Airflow into PostgreSQL</li>
-          <li>Designed a Star Schema Data Warehouse (1 fact + 5 dimensions) in dbt; converted the fact table from full-refresh to an incremental model (merge strategy + watermark), cutting processing time 3.7x</li>
-          <li>Implemented SCD Type 2 via dbt snapshots for customer history tracking; enforced data contracts and wrote 27 automated tests, including custom reconciliation tests</li>
-          <li>Built 5 analytics-ready data marts powering business dashboards: RFM customer segmentation, inventory forecasting, market basket analysis, and store/employee performance</li>
-          <li>Implemented role-based access control and PII masking for customer data; tuned query performance with indexing, validated via <code>EXPLAIN ANALYZE</code> (~2x improvement)</li>
-          <li>Set up CI/CD (GitHub Actions: lint + Slim CI) and a production-grade Airflow DAG (retries, SLA monitoring, alerting) for orchestration</li>
+          <li>ELT pipeline via n8n/Airflow into a dbt Star Schema warehouse (1 fact + 5 dims), incremental model cut load time 3.7x</li>
+          <li>SCD Type 2 history tracking, data contracts, and 27 automated tests including custom reconciliation checks</li>
+          <li>5 data marts (RFM, inventory forecast, market basket) plus RBAC/PII masking and CI/CD via GitHub Actions</li>
         </ul>
         <div class="proj-stats">
           <span class="proj-stat">270K+ transactions</span>
@@ -320,15 +318,12 @@
         </div>
         <h3 class="proj-title">Modern Retail Data Warehouse (ELT Pipeline)</h3>
         <p class="proj-desc">
-          Automated ELT pipeline unifying 4 heterogeneous retail data sources into a dbt-modeled Star Schema
-          warehouse, powering Metabase dashboards for both executives and operations teams.
+          Automated ELT pipeline unifying 4 heterogeneous retail sources into a dbt-modeled Star Schema warehouse.
         </p>
         <ul class="proj-bullets">
-          <li>Designed an automated n8n workflow integrating 4 heterogeneous data sources (ERP, POS, CRM, Google Sheets — CSV/JSON), loading 96,000+ records into PostgreSQL on a scheduled basis</li>
-          <li>Wrote advanced SQL (CTEs, window functions — <code>ROW_NUMBER</code>, <code>LAG</code>) via dbt to clean data, deduplicate records, and auto-detect price-change history (SCD Type 2)</li>
-          <li>Designed a Star Schema with 9 dimension + 3 fact tables, backed by a dbt test suite ensuring referential integrity and catching data-quality issues automatically</li>
-          <li>Built 3 business-ready data marts powering Metabase dashboards for two stakeholder groups (Executives & Operations): MoM revenue growth, on-time delivery rate, profit margin</li>
-          <li>Containerized the full stack with Docker Compose for one-command, reproducible deployment</li>
+          <li>Automated n8n workflow unifying 4 heterogeneous sources (ERP, POS, CRM, Sheets) into PostgreSQL, 96K+ records</li>
+          <li>dbt SQL (CTEs, window functions) for cleaning, dedup, and SCD Type 2 price-history tracking on a 9-dim + 3-fact Star Schema</li>
+          <li>3 data marts feeding Metabase dashboards (revenue growth, delivery rate, margin); one-command Docker Compose deploy</li>
         </ul>
         <div class="proj-stats">
           <span class="proj-stat">4 heterogeneous sources</span>
@@ -354,15 +349,12 @@
         </div>
         <h3 class="proj-title">WWI Retail Data Warehouse — Modern Data Stack</h3>
         <p class="proj-desc">
-          Production-minded ELT pipeline built on Wide World Importers data, unifying 6 source files into a
-          Star Schema warehouse in dbt and shipping 3 Metabase dashboards for Executives, Finance, and Operations.
+          Production-minded ELT pipeline on Wide World Importers data, shipping 3 Metabase dashboards for Execs, Finance, and Ops.
         </p>
         <ul class="proj-bullets">
-          <li>Designed an automated n8n EL workflow ingesting 6 CSV sources (customers, products, salespeople, invoices, order fulfillment, transactions) into PostgreSQL on a 6-hour schedule, with TRUNCATE-based idempotency and primary-key constraints to fail fast on duplicate loads</li>
-          <li>Modeled a Star Schema in dbt (4 dimensions + 5 fact tables) and built 5 downstream data marts powering 3 Metabase dashboards for Executives, Finance, and Operations</li>
-          <li>Implemented SCD Type 2 via dbt snapshots to preserve historical customer attribute changes, and converted 3 detail fact tables from full-refresh to incremental models (delete+insert), cutting no-op rebuild time to under 1 second</li>
-          <li>Added dbt source freshness checks (warn &gt;8h, error &gt;24h) and dbt exposures to map dashboard dependencies before schema changes</li>
-          <li>Built a CI/CD pipeline (GitHub Actions) running dbt build, tests, and freshness checks on every PR against a temporary Postgres instance</li>
+          <li>n8n EL workflow on a 6-hour schedule, idempotent via TRUNCATE + primary keys to fail fast on duplicate loads</li>
+          <li>dbt Star Schema (4 dims + 5 facts) with SCD Type 2 snapshots and incremental models, rebuild time under 1 second</li>
+          <li>Source freshness checks, dbt exposures, and a GitHub Actions CI pipeline validating every PR against a temp Postgres</li>
         </ul>
         <div class="proj-stats">
           <span class="proj-stat">6 heterogeneous sources</span>
