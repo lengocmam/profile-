@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Duy — Data Engineering Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0E11; --panel:#12181C; --panel-hi:#161E23; --border:#22303A;
+    --cyan:#4FD8C4; --amber:#F2A65A; --text:#EDF2F4; --muted:#8CA0AA;
+    --serif:'Fraunces', Georgia, serif; --mono:'IBM Plex Mono', ui-monospace, monospace; --sans:'IBM Plex Sans', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.65; -webkit-font-smoothing:antialiased;}
+  a{color:inherit;}
+  ::selection{background:var(--cyan); color:#04120F;}
+  .grid-bg{position:fixed; inset:0; z-index:-1; background-image:linear-gradient(to right, rgba(79,216,196,0.045) 1px, transparent 1px), linear-gradient(to bottom, rgba(79,216,196,0.045) 1px, transparent 1px); background-size:44px 44px; mask-image:radial-gradient(circle at 50% 0%, black, transparent 78%);}
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{outline:2px solid var(--cyan); outline-offset:3px; border-radius:2px;}
+  .wrap{max-width:1040px; margin:0 auto; padding:0 24px;}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(10,14,17,0.82); backdrop-filter:blur(10px); border-bottom:1px solid var(--border);}
+  nav.wrap{display:flex; align-items:center; justify-content:space-between; height:64px;}
+  .brand{font-family:var(--mono); font-weight:600; font-size:15px; display:flex; align-items:center; gap:8px;}
+  .brand .dot{width:8px; height:8px; border-radius:50%; background:var(--cyan); box-shadow:0 0 8px var(--cyan);}
+  nav ul{list-style:none; display:flex; gap:28px;}
+  nav ul a{font-family:var(--mono); font-size:13px; color:var(--muted); text-decoration:none; transition:color .18s ease;}
+  nav ul a:hover{color:var(--cyan);}
+
+  /* HERO */
+  .hero{padding:100px 0 60px; text-align:center;}
+  .avatar-ring{width:96px; height:96px; margin:0 auto 28px; border-radius:50%; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; background:var(--panel); font-family:var(--mono); font-size:12px; color:var(--cyan); position:relative;}
+  .avatar-ring::before{content:''; position:absolute; inset:-6px; border-radius:50%; border:1px dashed var(--border);}
+  .eyebrow{font-family:var(--mono); font-size:12.5px; color:var(--cyan); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:16px; display:flex; align-items:center; gap:10px; justify-content:center;}
+  .eyebrow::before{content:'▹'; color:var(--amber);}
+  h1{font-family:var(--serif); font-weight:600; font-size:clamp(38px,6vw,64px); line-height:1.06; letter-spacing:-0.01em;}
+  h1 .accent{color:var(--cyan); font-style:italic;}
+  .role-tag{font-family:var(--mono); font-size:14px; color:var(--muted); margin-top:14px;}
+  .lede{margin:22px auto 0; max-width:56ch; color:var(--muted); font-size:16.5px;}
+  .lede b{color:var(--text); font-weight:600;}
+  .cta-row{display:flex; gap:14px; margin-top:32px; flex-wrap:wrap; justify-content:center;}
+  .btn{font-family:var(--mono); font-size:13.5px; font-weight:500; padding:12px 20px; border-radius:6px; text-decoration:none; display:inline-flex; align-items:center; gap:8px; transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease; border:1px solid var(--border); cursor:pointer; background:transparent; color:var(--text);}
+  .btn-primary{background:var(--cyan); color:#04120F; border-color:var(--cyan);}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 8px 24px -8px rgba(79,216,196,0.5);}
+  .btn-ghost:hover{border-color:var(--cyan); color:var(--cyan); transform:translateY(-2px);}
+
+  .dag-wrap{margin:48px auto 0; max-width:720px; border:1px solid var(--border); border-radius:10px; background:var(--panel); padding:16px 18px 20px; overflow-x:auto; text-align:left;}
+  .dag-label{font-family:var(--mono); font-size:11px; color:var(--muted); margin-bottom:10px; display:flex; justify-content:space-between;}
+  .dag-label .run-ok{color:var(--cyan);}
+  svg.dag{display:block; min-width:520px; width:100%; height:auto;}
+  .dag-path{fill:none; stroke:var(--border); stroke-width:2;}
+  .dag-path-active{fill:none; stroke:var(--cyan); stroke-width:2; stroke-dasharray:6 7; animation:dash 1.6s linear infinite;}
+  @keyframes dash{to{stroke-dashoffset:-26;}}
+  .dag-node{fill:var(--panel-hi); stroke:var(--cyan); stroke-width:1.4;}
+  .dag-dot{fill:var(--amber);}
+  .dag-text{font-family:var(--mono); font-size:11px; fill:var(--text);}
+  @media (prefers-reduced-motion: reduce){.dag-path-active, #pulse{animation:none !important;}}
+
+  section{padding:80px 0;}
+  .sec-head{margin-bottom:40px; text-align:center;}
+  .sec-tag{font-family:var(--mono); font-size:12px; color:var(--amber); letter-spacing:0.06em; text-transform:uppercase;}
+  .sec-title{font-family:var(--serif); font-weight:600; font-size:clamp(26px,3.4vw,36px); margin-top:10px;}
+  .rule{height:1px; width:64px; background:var(--border); margin:18px auto 0;}
+
+  /* ABOUT */
+  .about-text{max-width:66ch; margin:0 auto; color:var(--muted); font-size:16px; text-align:center;}
+  .about-text b{color:var(--text);}
+
+  /* TABS */
+  .tabs-nav{display:flex; justify-content:center; gap:8px; margin:36px 0 30px; flex-wrap:wrap;}
+  .tab-btn{font-family:var(--mono); font-size:12.5px; padding:9px 16px; border-radius:20px; border:1px solid var(--border); background:var(--panel); color:var(--muted); cursor:pointer; transition:all .15s ease;}
+  .tab-btn:hover{color:var(--text); border-color:var(--cyan);}
+  .tab-btn.active{background:var(--cyan); color:#04120F; border-color:var(--cyan);}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block; animation:fadeIn .25s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  .skill-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:18px; max-width:760px; margin:0 auto;}
+  @media (max-width:640px){.skill-grid{grid-template-columns:1fr;}}
+  .skill-card{border:1px solid var(--border); border-radius:10px; background:var(--panel); padding:20px;}
+  .skill-card h3{font-family:var(--mono); font-size:12px; color:var(--amber); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;}
+  .chip{font-family:var(--mono); font-size:11.5px; color:var(--text); border:1px solid var(--border); border-radius:5px; padding:4px 9px; background:var(--panel-hi); display:inline-block; margin:0 6px 6px 0;}
+
+  .timeline-item{max-width:600px; margin:0 auto 18px; border:1px solid var(--border); border-radius:10px; background:var(--panel); padding:22px 24px; text-align:left;}
+  .timeline-item .when{font-family:var(--mono); font-size:11.5px; color:var(--cyan);}
+  .timeline-item h4{font-family:var(--serif); font-size:19px; font-weight:600; margin-top:8px;}
+  .timeline-item p{color:var(--muted); font-size:14px; margin-top:6px;}
+  .empty-state{max-width:520px; margin:0 auto; text-align:center; border:1px dashed var(--border); border-radius:10px; padding:32px 24px; color:var(--muted); font-size:14px;}
+  .empty-state span{display:block; font-family:var(--mono); font-size:11px; color:var(--amber); margin-bottom:8px; text-transform:uppercase; letter-spacing:.06em;}
+
+  /* PROJECTS */
+  .filter-row{display:flex; justify-content:center; gap:8px; margin-bottom:36px; flex-wrap:wrap;}
+  .project-grid{display:grid; gap:22px;}
+  .project{border:1px solid var(--border); border-radius:12px; background:var(--panel); padding:28px; transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease; display:block; text-decoration:none;}
+  .project:hover{border-color:var(--cyan); transform:translateY(-3px); box-shadow:0 14px 30px -18px rgba(79,216,196,0.35);}
+  .proj-top{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap;}
+  .proj-task{font-family:var(--mono); font-size:12px; color:var(--muted);}
+  .proj-task span{color:var(--cyan);}
+  .status{font-family:var(--mono); font-size:11px; padding:4px 10px; border-radius:20px; border:1px solid; white-space:nowrap; display:flex; align-items:center; gap:6px;}
+  .status::before{content:''; width:6px; height:6px; border-radius:50%;}
+  .status.success{color:var(--cyan); border-color:rgba(79,216,196,0.4); background:rgba(79,216,196,0.06);}
+  .status.success::before{background:var(--cyan);}
+  .status.running{color:var(--amber); border-color:rgba(242,166,90,0.4); background:rgba(242,166,90,0.06);}
+  .status.running::before{background:var(--amber); animation:blink 1.4s ease-in-out infinite;}
+  @keyframes blink{50%{opacity:.3;}}
+  @media (prefers-reduced-motion: reduce){.status.running::before{animation:none;}}
+  .proj-title{font-family:var(--serif); font-weight:600; font-size:21px; margin-top:14px;}
+  .proj-desc{color:var(--muted); margin-top:10px; font-size:14.5px; max-width:66ch;}
+  .proj-bullets{margin-top:14px; padding-left:18px; color:var(--muted); font-size:14px; max-width:70ch; display:flex; flex-direction:column; gap:8px;}
+  .proj-stats{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
+  .proj-stat{font-family:var(--mono); font-size:11.5px; color:var(--cyan); border:1px solid rgba(79,216,196,0.35); background:rgba(79,216,196,0.06); border-radius:6px; padding:5px 10px;}
+  .stack-row{margin-top:16px;}
+  .proj-foot{margin-top:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;}
+  .proj-foot .tag{font-family:var(--mono); font-size:12px; color:var(--muted);}
+  .proj-foot .tag b{color:var(--cyan); font-weight:500;}
+  .proj-link{font-family:var(--mono); font-size:12.5px; color:var(--cyan); text-decoration:none; display:inline-flex; align-items:center; gap:6px;}
+  .proj-link:hover{text-decoration:underline;}
+
+  /* CONTACT */
+  .contact-grid{display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start;}
+  @media (max-width:760px){.contact-grid{grid-template-columns:1fr;}}
+  .contact-copy p{color:var(--muted); margin-top:14px; max-width:46ch;}
+  .contact-info{margin-top:26px; display:flex; flex-direction:column; gap:12px;}
+  .contact-info a{font-family:var(--mono); font-size:13.5px; color:var(--text); text-decoration:none; display:flex; align-items:center; gap:10px;}
+  .contact-info a:hover{color:var(--cyan);}
+  .contact-info .ico{width:8px; height:8px; border-radius:50%; background:var(--cyan);}
+
+  form.contact-form{border:1px solid var(--border); border-radius:12px; background:var(--panel); padding:28px; display:flex; flex-direction:column; gap:16px;}
+  .field label{font-family:var(--mono); font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:8px;}
+  .field input, .field textarea{width:100%; background:var(--panel-hi); border:1px solid var(--border); border-radius:6px; padding:11px 12px; color:var(--text); font-family:var(--sans); font-size:14px;}
+  .field textarea{resize:vertical; min-height:100px;}
+  .field input::placeholder, .field textarea::placeholder{color:#5A6A73;}
+  .form-note{font-family:var(--mono); font-size:11px; color:var(--muted);}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--border); padding:64px 0 40px;}
+  .footer-grid{display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:40px;}
+  @media (max-width:760px){.footer-grid{grid-template-columns:1fr; gap:32px;}}
+  .footer-brand{font-family:var(--mono); font-weight:600; font-size:15px; display:flex; align-items:center; gap:8px;}
+  .footer-brand .dot{width:8px; height:8px; border-radius:50%; background:var(--cyan);}
+  .footer-blurb{color:var(--muted); font-size:13.5px; margin-top:14px; max-width:34ch;}
+  .footer-col h4{font-family:var(--mono); font-size:12px; color:var(--amber); text-transform:uppercase; letter-spacing:.06em; margin-bottom:16px;}
+  .footer-col ul{list-style:none; display:flex; flex-direction:column; gap:10px;}
+  .footer-col a{font-family:var(--mono); font-size:13px; color:var(--muted); text-decoration:none;}
+  .footer-col a:hover{color:var(--cyan);}
+  .foot-bottom{margin-top:48px; padding-top:24px; border-top:1px solid var(--border); display:flex; justify-content:space-between; color:var(--muted); font-family:var(--mono); font-size:12px; flex-wrap:wrap; gap:8px;}
+</style>
+</head>
+<body>
+<div class="grid-bg" aria-hidden="true"></div>
+
+<header>
+  <nav class="wrap">
+    <div class="brand"><span class="dot"></span>duy<span style="color:var(--muted)">@</span>portfolio</div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#background">Background</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero wrap">
+    <div class="avatar-ring">Duy</div>
+    <div class="eyebrow">Data Engineering Student · HCMUTE</div>
+    <h1>Hi, I'm <span class="accent">Duy</span></h1>
+    <p class="role-tag">Data Engineer & Aspiring Data Analyst</p>
+    <p class="lede">
+      I turn raw data into pipelines and insight — building ETL workflows, modeling schemas,
+      and applying explainable ML to make sense of what's underneath the numbers. Currently open to
+      <b>Data Analyst</b> and <b>Data Engineer</b> internship opportunities.
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#projects">View Projects</a>
+      <a class="btn btn-ghost" href="#contact">Contact Me</a>
+    </div>
+
+    <div class="dag-wrap">
+      <div class="dag-label"><span>pipeline: portfolio_run</span><span class="run-ok">● success · 4/4 tasks</span></div>
+      <svg class="dag" viewBox="0 0 760 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Data flow diagram: raw_data to transform to validate to insight">
+        <path class="dag-path" d="M70,60 H230 M300,60 H460 M530,60 H690"/>
+        <path class="dag-path-active" d="M70,60 H230 M300,60 H460 M530,60 H690"/>
+        <circle class="dag-dot" r="4"><animateMotion id="pulse" dur="3.2s" repeatCount="indefinite" path="M70,60 H230 M300,60 H460 M530,60 H690"/></circle>
+        <g><rect class="dag-node" x="20" y="38" width="100" height="44" rx="8"/><text class="dag-text" x="70" y="64" text-anchor="middle">raw_data</text></g>
+        <g><rect class="dag-node" x="230" y="38" width="100" height="44" rx="8"/><text class="dag-text" x="280" y="64" text-anchor="middle">transform</text></g>
+        <g><rect class="dag-node" x="440" y="38" width="100" height="44" rx="8"/><text class="dag-text" x="490" y="64" text-anchor="middle">validate</text></g>
+        <g><rect class="dag-node" x="640" y="38" width="100" height="44" rx="8"/><text class="dag-text" x="690" y="64" text-anchor="middle">insight</text></g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag">// about</div>
+      <h2 class="sec-title">About Me</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="about-text">
+      I'm a <b>Data Engineering student at HCMUTE</b> in Ho Chi Minh City, focused on the full lifecycle
+      of data — from ingestion and pipeline orchestration to modeling and explainability. I like systems
+      where I can trace a number all the way back to its source, and I enjoy building projects end-to-end:
+      schema design, ETL, and the dashboards or reports people actually read.
+    </p>
+  </section>
+
+  <!-- BACKGROUND TABS -->
+  <section id="background" class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag">// background</div>
+      <h2 class="sec-title">Skills & Background</h2>
+      <div class="rule"></div>
+    </div>
+
+    <div class="tabs-nav" role="tablist">
+      <button class="tab-btn active" data-tab="skills" role="tab" aria-selected="true">Skills</button>
+      <button class="tab-btn" data-tab="education" role="tab" aria-selected="false">Education</button>
+      <button class="tab-btn" data-tab="experience" role="tab" aria-selected="false">Experience</button>
+      <button class="tab-btn" data-tab="certifications" role="tab" aria-selected="false">Certifications</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-skills">
+      <div class="skill-grid">
+        <div class="skill-card">
+          <h3>Data & Pipelines</h3>
+          <div><span class="chip">Python</span><span class="chip">PostgreSQL</span><span class="chip">Apache Airflow</span><span class="chip">Docker</span><span class="chip">Power BI</span><span class="chip">Spark Streaming</span></div>
+        </div>
+        <div class="skill-card">
+          <h3>Modeling & Explainability</h3>
+          <div><span class="chip">XGBoost</span><span class="chip">LightGBM</span><span class="chip">Optuna</span><span class="chip">PyTorch</span><span class="chip">SHAP</span></div>
+        </div>
+        <div class="skill-card">
+          <h3>Research Tooling</h3>
+          <div><span class="chip">RAG</span><span class="chip">ChromaDB</span><span class="chip">Panel OLS</span></div>
+        </div>
+        <div class="skill-card">
+          <h3>Foundations</h3>
+          <div><span class="chip">Data Structures & Algorithms (C)</span><span class="chip">Digital Image Processing</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-education">
+      <div class="timeline-item">
+        <div class="when">In progress</div>
+        <h4>B.Eng. in Data Engineering</h4>
+        <p>Ho Chi Minh City University of Technology and Education (HCMUTE)</p>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-experience">
+      <div class="empty-state">
+        <span>No entries yet</span>
+        This section is ready whenever you want to add an internship, part-time role, or club experience.
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-certifications">
+      <div class="empty-state">
+        <span>No entries yet</span>
+        Add certifications here as you earn them — they'll show up in this same card style.
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag">// dagbag</div>
+      <h2 class="sec-title">Projects</h2>
+      <div class="rule"></div>
+    </div>
+
+    <div class="project-grid">
+      <a class="project" data-category="pipeline" href="https://github.com/lengocmam/fnb_bi_platform" target="_blank" rel="noopener">
+        <div class="proj-top">
+          <div class="proj-task">task_id: <span>fnb_bi_platform</span></div>
+          <div class="status success">success</div>
+        </div>
+        <h3 class="proj-title">F&amp;B Business Intelligence Platform</h3>
+        <p class="proj-desc">
+          End-to-end ELT pipeline on a Modern Data Stack, processing 270K+ sales transactions for a simulated
+          20-store F&amp;B chain — from raw ingestion to Star Schema warehouse to decision-ready data marts.
+        </p>
+        <ul class="proj-bullets">
+          <li>Built an end-to-end ELT pipeline ingesting data from a REST API (JSON), CSVs, and Google Sheets via n8n/Airflow into PostgreSQL</li>
+          <li>Designed a Star Schema Data Warehouse (1 fact + 5 dimensions) in dbt; converted the fact table from full-refresh to an incremental model (merge strategy + watermark), cutting processing time 3.7x</li>
+          <li>Implemented SCD Type 2 via dbt snapshots for customer history tracking; enforced data contracts and wrote 27 automated tests, including custom reconciliation tests</li>
+          <li>Built 5 analytics-ready data marts powering business dashboards: RFM customer segmentation, inventory forecasting, market basket analysis, and store/employee performance</li>
+          <li>Implemented role-based access control and PII masking for customer data; tuned query performance with indexing, validated via <code>EXPLAIN ANALYZE</code> (~2x improvement)</li>
+          <li>Set up CI/CD (GitHub Actions: lint + Slim CI) and a production-grade Airflow DAG (retries, SLA monitoring, alerting) for orchestration</li>
+        </ul>
+        <div class="proj-stats">
+          <span class="proj-stat">270K+ transactions</span>
+          <span class="proj-stat">3.7x faster incremental load</span>
+          <span class="proj-stat">27 automated tests</span>
+          <span class="proj-stat">~2x query speedup</span>
+        </div>
+        <div class="stack-row">
+          <span class="chip">PostgreSQL</span><span class="chip">dbt · Star Schema</span>
+          <span class="chip">Airflow · n8n</span><span class="chip">FastAPI</span>
+          <span class="chip">Metabase</span><span class="chip">Docker</span>
+        </div>
+        <div class="proj-foot">
+          <span class="tag">Focus: <b>Data Analytics / Data Engineering</b></span>
+          <span class="proj-link">View on GitHub →</span>
+        </div>
+      </a>
+
+      <a class="project" data-category="pipeline" href="https://github.com/lengocmam/Superstore-Data-Warehouse" target="_blank" rel="noopener">
+        <div class="proj-top">
+          <div class="proj-task">task_id: <span>retail_dwh_elt</span></div>
+          <div class="status success">success</div>
+        </div>
+        <h3 class="proj-title">Modern Retail Data Warehouse (ELT Pipeline)</h3>
+        <p class="proj-desc">
+          Automated ELT pipeline unifying 4 heterogeneous retail data sources into a dbt-modeled Star Schema
+          warehouse, powering Metabase dashboards for both executives and operations teams.
+        </p>
+        <ul class="proj-bullets">
+          <li>Designed an automated n8n workflow integrating 4 heterogeneous data sources (ERP, POS, CRM, Google Sheets — CSV/JSON), loading 96,000+ records into PostgreSQL on a scheduled basis</li>
+          <li>Wrote advanced SQL (CTEs, window functions — <code>ROW_NUMBER</code>, <code>LAG</code>) via dbt to clean data, deduplicate records, and auto-detect price-change history (SCD Type 2)</li>
+          <li>Designed a Star Schema with 9 dimension + 3 fact tables, backed by a dbt test suite ensuring referential integrity and catching data-quality issues automatically</li>
+          <li>Built 3 business-ready data marts powering Metabase dashboards for two stakeholder groups (Executives & Operations): MoM revenue growth, on-time delivery rate, profit margin</li>
+          <li>Containerized the full stack with Docker Compose for one-command, reproducible deployment</li>
+        </ul>
+        <div class="proj-stats">
+          <span class="proj-stat">4 heterogeneous sources</span>
+          <span class="proj-stat">96K+ records</span>
+          <span class="proj-stat">9 dim + 3 fact tables</span>
+          <span class="proj-stat">SCD Type 2</span>
+        </div>
+        <div class="stack-row">
+          <span class="chip">PostgreSQL</span><span class="chip">dbt · Star Schema</span>
+          <span class="chip">n8n</span><span class="chip">Docker Compose</span>
+          <span class="chip">Metabase</span>
+        </div>
+        <div class="proj-foot">
+          <span class="tag">Focus: <b>Data Analytics / Data Engineering</b></span>
+          <span class="proj-link">View on GitHub →</span>
+        </div>
+      </a>
+
+      <a class="project" data-category="pipeline" href="https://github.com/lengocmam/wwiiiii" target="_blank" rel="noopener">
+        <div class="proj-top">
+          <div class="proj-task">task_id: <span>wwi_retail_dwh</span></div>
+          <div class="status success">success</div>
+        </div>
+        <h3 class="proj-title">WWI Retail Data Warehouse — Modern Data Stack</h3>
+        <p class="proj-desc">
+          Production-minded ELT pipeline built on Wide World Importers data, unifying 6 source files into a
+          Star Schema warehouse in dbt and shipping 3 Metabase dashboards for Executives, Finance, and Operations.
+        </p>
+        <ul class="proj-bullets">
+          <li>Designed an automated n8n EL workflow ingesting 6 CSV sources (customers, products, salespeople, invoices, order fulfillment, transactions) into PostgreSQL on a 6-hour schedule, with TRUNCATE-based idempotency and primary-key constraints to fail fast on duplicate loads</li>
+          <li>Modeled a Star Schema in dbt (4 dimensions + 5 fact tables) and built 5 downstream data marts powering 3 Metabase dashboards for Executives, Finance, and Operations</li>
+          <li>Implemented SCD Type 2 via dbt snapshots to preserve historical customer attribute changes, and converted 3 detail fact tables from full-refresh to incremental models (delete+insert), cutting no-op rebuild time to under 1 second</li>
+          <li>Added dbt source freshness checks (warn &gt;8h, error &gt;24h) and dbt exposures to map dashboard dependencies before schema changes</li>
+          <li>Built a CI/CD pipeline (GitHub Actions) running dbt build, tests, and freshness checks on every PR against a temporary Postgres instance</li>
+        </ul>
+        <div class="proj-stats">
+          <span class="proj-stat">6 heterogeneous sources</span>
+          <span class="proj-stat">4 dim + 5 fact tables</span>
+          <span class="proj-stat">3 Metabase dashboards</span>
+          <span class="proj-stat">&lt;1s incremental rebuild</span>
+        </div>
+        <div class="stack-row">
+          <span class="chip">PostgreSQL</span><span class="chip">dbt · Star Schema</span>
+          <span class="chip">n8n</span><span class="chip">Docker Compose</span>
+          <span class="chip">Metabase</span><span class="chip">GitHub Actions</span>
+        </div>
+        <div class="proj-foot">
+          <span class="tag">Focus: <b>Data Analytics / Data Engineering</b></span>
+          <span class="proj-link">View on GitHub →</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag">// contact</div>
+      <h2 class="sec-title">Get in Touch</h2>
+      <div class="rule"></div>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-copy">
+        <p><b style="color:var(--text)">Let's talk about internship opportunities.</b></p>
+        <p>Always open to conversations about Data Analyst or Data Engineer Intern roles — feel free to reach out directly or send a message.</p>
+        <div class="contact-info">
+          <a href="https://maps.google.com/?q=Ho+Chi+Minh+City" target="_blank" rel="noopener"><span class="ico"></span>Ho Chi Minh City, Vietnam</a>
+          <a href="mailto:ngocduyshpy@gmail.com"><span class="ico"></span>ngocduyshpy@gmail.com</a>
+          <a href="https://github.com/lengocmam" target="_blank" rel="noopener"><span class="ico"></span>github.com/lengocmam</a>
+        </div>
+      </div>
+
+      <form class="contact-form" id="contactForm">
+        <div class="field">
+          <label for="fname">Full Name</label>
+          <input id="fname" name="fname" type="text" placeholder="Your name" required>
+        </div>
+        <div class="field">
+          <label for="femail">Email</label>
+          <input id="femail" name="femail" type="email" placeholder="you@example.com" required>
+        </div>
+        <div class="field">
+          <label for="fmsg">Message</label>
+          <textarea id="fmsg" name="fmsg" placeholder="Tell me about the role or opportunity..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="justify-content:center;">Send Message</button>
+        <div class="form-note">Opens your email client — replace the address above with your own before sharing this page.</div>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="wrap">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand"><span class="dot"></span>Duy</div>
+          <p class="footer-blurb">Data Engineering student passionate about building pipelines that turn raw data into decisions people can trust.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#background">Background</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact Info</h4>
+          <ul>
+            <li><a href="https://maps.google.com/?q=Ho+Chi+Minh+City" target="_blank" rel="noopener">Ho Chi Minh City, Vietnam</a></li>
+            <li><a href="mailto:ngocduyshpy@gmail.com">ngocduyshpy@gmail.com</a></li>
+            <li><a href="https://github.com/lengocmam" target="_blank" rel="noopener">github.com/lengocmam</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© 2026 Duy — Data Engineering Student, HCMUTE</span>
+        <span>built with HTML · CSS · JS</span>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<script>
+  // Background tabs
+  document.querySelectorAll('.tabs-nav .tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tabs-nav .tab-btn').forEach(b=>{b.classList.remove('active'); b.setAttribute('aria-selected','false');});
+      btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+      document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Contact form -> mailto
+  document.getElementById('contactForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = document.getElementById('fname').value;
+    const email = document.getElementById('femail').value;
+    const msg = document.getElementById('fmsg').value;
+    const subject = encodeURIComponent('Portfolio contact from ' + name);
+    const body = encodeURIComponent(msg + '\n\n— ' + name + ' (' + email + ')');
+    window.location.href = 'mailto:ngocduyshpy@gmail.com?subject=' + subject + '&body=' + body;
+  });
+</script>
+</body>
+</html>
