@@ -280,6 +280,40 @@
     </div>
 
     <div class="project-grid">
+      <a class="project" data-category="ml" href="https://github.com/lengocmam/sdg16" target="_blank" rel="noopener">
+        <div class="proj-top">
+          <div class="proj-task">task_id: <span>sdg16_intelligence_platform</span></div>
+          <div class="status running">running</div>
+        </div>
+        <h3 class="proj-title">SDG16 Intelligence Platform</h3>
+        <p class="proj-desc">
+          Explainable ML + RAG platform for forecasting and interpreting Vietnam's SDG16 score (Peace, Justice, and Strong
+          Institutions) — a production-oriented implementation of a research framework for diagnosing governance gaps and
+          forecasting score trajectories toward 2030.
+        </p>
+        <ul class="proj-bullets">
+          <li>End-to-end pipeline: SDSN data → Data Lake → PySpark/Spark MLlib → Explainability → RAG (Qdrant) → LLM → FastAPI → Spring Boot → Vue</li>
+          <li>Processes a panel of 4,392 country-year observations across 183 countries (2000–2023) with 17 SDG16 sub-indicators, using time-based train/validation/test splits to prevent leakage</li>
+          <li>Explainability layer breaks down Vietnam's governance gaps by indicator; microservice architecture cleanly separates data/ML, backend, and frontend layers for parallel team work</li>
+        </ul>
+        <div class="proj-stats">
+          <span class="proj-stat">4,392 obs. · 183 countries</span>
+          <span class="proj-stat">17 SDG16 indicators</span>
+          <span class="proj-stat">6-stage research pipeline</span>
+          <span class="proj-stat">Docker Compose · multi-profile</span>
+        </div>
+        <div class="stack-row">
+          <span class="chip">PySpark</span><span class="chip">Spark MLlib</span>
+          <span class="chip">FastAPI</span><span class="chip">Spring Boot</span>
+          <span class="chip">Vue 3</span><span class="chip">Qdrant · RAG</span>
+          <span class="chip">Docker Compose</span>
+        </div>
+        <div class="proj-foot">
+          <span class="tag">Focus: <b>Explainable ML / Data Platform Architecture</b></span>
+          <span class="proj-link">View on GitHub →</span>
+        </div>
+      </a>
+
       <a class="project" data-category="pipeline" href="https://github.com/lengocmam/fnb_bi_platform" target="_blank" rel="noopener">
         <div class="proj-top">
           <div class="proj-task">task_id: <span>fnb_bi_platform</span></div>
