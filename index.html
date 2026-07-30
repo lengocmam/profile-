@@ -142,6 +142,16 @@
   .timeline-item .when{font-family:var(--mono); font-size:11.5px; color:var(--cyan);}
   .timeline-item h4{font-family:var(--serif); font-size:19px; font-weight:600; margin-top:8px;}
   .timeline-item p{color:var(--muted); font-size:14px; margin-top:6px;}
+  .cert-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; max-width:760px; margin:0 auto;}
+  @media (max-width:640px){.cert-grid{grid-template-columns:1fr;}}
+  .cert-card{border:1px solid var(--border); border-radius:10px; background:var(--panel); padding:20px; text-align:left; text-decoration:none; display:block; transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease;}
+  .cert-card:hover{border-color:var(--cyan); transform:translateY(-2px); box-shadow:0 12px 26px -18px rgba(79,216,196,0.35);}
+  .cert-top{display:flex; justify-content:space-between; align-items:center;}
+  .cert-issuer{font-family:var(--mono); font-size:11px; color:var(--amber); text-transform:uppercase; letter-spacing:.05em;}
+  .cert-hours{font-family:var(--mono); font-size:11px; color:var(--cyan); border:1px solid rgba(79,216,196,0.35); background:rgba(79,216,196,0.06); border-radius:6px; padding:3px 8px;}
+  .cert-card h4{font-family:var(--serif); font-size:16.5px; font-weight:600; margin-top:12px; line-height:1.3;}
+  .cert-meta{font-family:var(--mono); font-size:11.5px; color:var(--muted); margin-top:8px;}
+  .cert-link{font-family:var(--mono); font-size:12px; color:var(--cyan); margin-top:12px; display:inline-block;}
   .empty-state{max-width:520px; margin:0 auto; text-align:center; border:1px dashed var(--border); border-radius:10px; padding:32px 24px; color:var(--muted); font-size:14px;}
   .empty-state span{display:block; font-family:var(--mono); font-size:11px; color:var(--amber); margin-bottom:8px; text-transform:uppercase; letter-spacing:.06em;}
 
@@ -345,9 +355,34 @@
     </div>
 
     <div class="tab-panel" id="tab-certifications">
-      <div class="empty-state">
-        <span>No entries yet</span>
-        Add certifications here as you earn them — they'll show up in this same card style.
+      <div class="cert-grid">
+        <a class="cert-card" href="https://www.credly.com/go/EaTTAPia" target="_blank" rel="noopener">
+          <div class="cert-top">
+            <span class="cert-issuer">AWS Academy</span>
+            <span class="cert-hours">40h</span>
+          </div>
+          <h4>AWS Academy Graduate — Data Engineering</h4>
+          <div class="cert-meta">Training Badge · Issued 11/05/2025</div>
+          <span class="cert-link">View credential →</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/go/YbDAOB70" target="_blank" rel="noopener">
+          <div class="cert-top">
+            <span class="cert-issuer">AWS Academy</span>
+            <span class="cert-hours">20h</span>
+          </div>
+          <h4>AWS Academy Graduate — Machine Learning for NLP</h4>
+          <div class="cert-meta">Training Badge · Issued 11/05/2025</div>
+          <span class="cert-link">View credential →</span>
+        </a>
+        <a class="cert-card" href="https://www.credly.com/go/eL7SyERC" target="_blank" rel="noopener">
+          <div class="cert-top">
+            <span class="cert-issuer">AWS Academy</span>
+            <span class="cert-hours">12h</span>
+          </div>
+          <h4>AWS Academy Graduate — Cloud Web Application Builder</h4>
+          <div class="cert-meta">Training Badge · Issued 10/09/2025</div>
+          <span class="cert-link">View credential →</span>
+        </a>
       </div>
     </div>
   </section>
